@@ -1,3 +1,11 @@
 *.crabir
 *.ll
 # *.bc
+scale/outputs/*
+!scale/outputs/.gitkeep
+scale/paper_results/*
+!scale/paper_results/.gitkeep
+scale/data/*
+!scale/data/.gitkeep
+scale/stats/*
+!scale/stats/.gitkeep
