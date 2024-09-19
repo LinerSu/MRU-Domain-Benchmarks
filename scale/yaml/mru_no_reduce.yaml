@@ -1,0 +1,5 @@
+clam_options:
+#
+# MRUD options
+#
+  crab-dom-param: "region.is_dereferenceable=true:region.skip_unknown_regions=true:region.tag_analysis=false:object.reduction_level=NONE:object.singletons_in_base=false"
