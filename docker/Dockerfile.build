@@ -1,0 +1,162 @@
+FROM ubuntu:22.04
+
+ENV JOBS=16
+
+# Install dependencies
+ENV ESSENTIAL_PACKAGES="build-essential git pkg-config libgmp-dev libmpfr-dev \
+cmake cmake-data unzip zlib1g-dev ninja-build opam libclang-dev libclang-cpp-dev \
+less vim curl wget gcc-multilib sudo rsync m4 adduser"
+
+ENV PYTHON_PACKAGES="python3 python3-pip python3-setuptools python3-wheel"
+
+ENV LLVM14_PACKAGES="clang-14 lldb-14 lld-14 clang-format-14"
+
+ENV PIP_PACKAGES="lit OutputCheck networkx"
+
+ENV OPAM_DEPS dune apron zarith menhir yojson ocamlfind
+
+## Upate
+RUN apt-get update && apt-get install -yqq software-properties-common && \
+    apt-get update && apt-get upgrade -yqq
+
+RUN add-apt-repository -y ppa:deadsnakes/ppa && apt-get update
+
+## Install essential packages
+RUN apt-get install -yqq $ESSENTIAL_PACKAGES
+
+RUN apt-get install -yqq $PYTHON_PACKAGES
+
+RUN pip3 install $PIP_PACKAGES
+
+## Install LLVM 14
+RUN apt-get install -yqq $LLVM14_PACKAGES
+
+# Setup default user
+RUN useradd -ms /bin/bash agent && \
+    echo agent:hunt | chpasswd && \
+    usermod -aG sudo agent
+
+ENV TERM xterm-256color
+
+# Install boost
+WORKDIR /tmp
+RUN curl -sSOL https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz && \
+    tar xf boost_1_84_0.tar.gz && cd boost_1_84_0 && \
+    ./bootstrap.sh --prefix=/opt/boost && \
+    ./b2 -j $JOBS install
+
+## Install Z3
+RUN git clone https://github.com/LinerSu/z3.git && \
+  cd z3 && git checkout fix-performance && \
+  python3 scripts/mk_make.py --prefix=/opt/z3 && cd build && make -j $JOBS && make install
+
+## Install Yices2
+RUN curl -sSOL https://yices.csl.sri.com/releases/2.6.4/yices-2.6.4-x86_64-pc-linux-gnu.tar.gz && \
+    tar xf yices-2.6.4-x86_64-pc-linux-gnu.tar.gz && \
+    cd /tmp/yices-2.6.4/ && \
+    ./install-yices /opt/yices-2.6.4
+
+USER agent
+# Clam
+WORKDIR /home/agent/tools
+RUN git clone https://github.com/LinerSu/clam.git && \
+    cd clam && \
+    git checkout VMCAI-2025
+
+WORKDIR /home/agent/tools/clam
+RUN git clone https://github.com/LinerSu/crab.git && \
+    cd crab && \
+    git checkout VMCAI-2025
+
+RUN mkdir build && cd build && \
+    cmake .. -GNinja -DCLAM_ENABLE_ASAN=OFF -DCRAB_USE_APRON=OFF \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DLLVM_DIR=/usr/lib/llvm-14/lib/cmake/llvm \
+    -DCMAKE_INSTALL_PREFIX=run \
+    -DCMAKE_CXX_COMPILER=clang++-14 \
+    -DCMAKE_C_COMPILER=clang-14 \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+    -DCRAB_USE_LDD=ON \
+    -DCRAB_USE_ELINA=ON -DCLAM_USE_OBJECT_DOM=ON \
+    -DCLAM_USE_DBM_SAFEINT=OFF -DCLAM_USE_DBM_BIGNUM=ON \
+    -DCUSTOM_BOOST_ROOT=/opt/boost
+
+
+RUN cd build && \
+    cmake --build . --target extra && \
+    cmake .. && \
+    cmake --build . --target ldd && \
+    cmake .. && \
+    cmake --build . --target elina && \
+    cmake .. && \
+    ninja install
+
+ENV CLAM=/home/agent/tools/clam/build/run/bin/clam PATH="$PATH:/home/agent/tools/clam/build/run/bin"
+
+# SeaHorn
+WORKDIR /home/agent/tools
+RUN git clone https://github.com/LinerSu/seahorn.git && cd seahorn && git checkout VMCAI-2025
+WORKDIR /home/agent/tools/seahorn
+RUN git clone https://github.com/LinerSu/clam.git && cd clam && git checkout VMCAI-2025
+WORKDIR /home/agent/tools/seahorn/clam
+RUN git clone https://github.com/LinerSu/crab.git && cd crab && git checkout VMCAI-2025
+## Install SeaHorn
+WORKDIR /home/agent/tools/seahorn
+RUN mkdir build && cd build && \
+    cmake .. -GNinja \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=run \
+    -DLLVM_DIR=/usr/lib/llvm-14/lib/cmake/llvm \
+    -DCMAKE_CXX_COMPILER=clang++-14 \
+    -DCMAKE_C_COMPILER=clang-14 \
+    -DZ3_ROOT=/opt/z3 \
+    -DYICES2_HOME=/opt/yices-2.6.4 \
+    -DSEA_ENABLE_LLD=ON \
+    -DCRAB_USE_LDD=ON \
+    -DCRAB_USE_ELINA=ON \
+    -DCLAM_USE_OBJECT_DOM=ON \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DCUSTOM_BOOST_ROOT=/opt/boost
+
+RUN cd build && \
+    cmake --build . --target extra && \
+    cmake .. && \
+    cmake --build . --target ldd && \
+    cmake .. && \
+    cmake --build . --target elina && \
+    cmake .. && \
+    ninja install
+
+ENV SEAHORN=/home/agent/tools/seahorn/build/run/bin/sea PATH="$PATH:/home/agent/tools/seahorn/build/run/bin"
+
+# Mopsa
+WORKDIR /home/agent/tools
+## Prequisites
+RUN opam init --disable-sandboxing -y && \
+    eval $(opam env) && \
+    opam switch create 4.14.0 && \
+    eval $(opam env) && \
+    opam update -y && \
+    opam install -y -j $JOBS $OPAM_DEPS
+
+RUN eval `opam config env` && \
+    opam env >> .profile && \
+    opam env >> .bashrc
+
+WORKDIR /home/agent/tools
+RUN git clone https://gitlab.com/mopsa/mopsa-analyzer.git && \
+    cd mopsa-analyzer && \
+    git checkout -b vmcai25 12f3e61
+
+WORKDIR /home/agent/tools/mopsa-analyzer
+RUN eval `opam config env` && ./configure --prefix /home/agent/tools && \
+    make -j && \
+    make install && \
+    mopsa -v
+
+# Add benchmarks
+USER agent
+WORKDIR /home/agent
+
+RUN mkdir benchmarks
+COPY --chown=agent:agent ../. benchmarks
