@@ -1,0 +1,54 @@
+clam_options:
+# CLANG
+#
+  '-g' : ''
+# Optimization level for seaopt  
+  # '-O3': ''
+  '-D': '__CRAB__'
+  save-temps: ''
+  temp-dir: /tmp/tests
+#   
+# PREPROCESSING
+#
+  lower-unsigned-icmp : ''
+  llvm-peel-loops: '1'
+  inline: ''
+  devirt-functions: 'sea-dsa'
+  crab-name-values: false
+  crab-lower-unsigned-icmp: true
+  crab-lower-with-overflow-intrinsics: true
+#  
+# ANALYSIS
+#
+  crab-dom : 'zones'
+  crab-inter : ''
+  crab-inter-recursive-functions : true
+  crab-inter-exact-summary-reuse : false
+  crab-inter-max-summaries : '9999999'
+  crab-inter-entry-main : true
+  crab-track : 'mem'
+  crab-singleton-aliases : ''
+  crab-heap-analysis : 'cs-sea-dsa-types'
+  crab-narrowing-iterations: '1'
+  crab-widening-delay: '1'
+  crab-widening-jump-set: '0'
+  crab-preserve-invariants: false
+  crab-dom-param: "region.is_dereferenceable=true:object.singletons_in_base=false:object.reduction_level=OPT"
+  crab-check: 'assert' # assert bounds
+#
+# OUTPUT
+#
+# crab-sanity-checks : ''
+  crab-disable-warnings: ''
+  # crab-heap-dot: ''
+  crab-print-invariants: true
+# crab-stats: ''
+  # crab-verbose: 5
+  # crab-check-verbose: 5
+  # log: 'object-print' #:object-widen:object-join:object-reduce
+  # log: 'object-print:inter:object-forget:object-project:object-leq:object-meet:inter:object-join:object-copy:inter-group'
+  ocrab: 'main.crabir'
+  # log: 'cfg-bnd-check:cfg-bnd-check-trivial'
+  # crab-heap-dot: ''
+  # crab-dot-cfg: ''
+  # crab-print-cfg: true

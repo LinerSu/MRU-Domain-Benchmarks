@@ -1,0 +1,28 @@
+Yama executing command:
+/home/yusen/seawork/clam/build/run/bin/clam.py -g -D __CRAB__ --save-temps --temp-dir=/tmp/tests --lower-unsigned-icmp --llvm-peel-loops=1 --inline --devirt-functions=sea-dsa --crab-name-values=false --crab-lower-unsigned-icmp=true --crab-lower-with-overflow-intrinsics=true --crab-dom=zones --crab-inter --crab-inter-recursive-functions=true --crab-inter-exact-summary-reuse=false --crab-inter-max-summaries=9999999 --crab-inter-entry-main=true --crab-track=mem --crab-singleton-aliases --crab-heap-analysis=cs-sea-dsa-types --crab-narrowing-iterations=1 --crab-widening-delay=1 --crab-widening-jump-set=0 --crab-preserve-invariants=false --crab-dom-param=region.is_dereferenceable=true:object.singletons_in_base=false:object.reduction_level=OPT --crab-check=assert --crab-disable-warnings --crab-print-invariants=true --ocrab=main.crabir -ocrab=/home/yusen/seawork/new-benchmarks/MRU-Domain-Benchmarks/precision/outputs/obj/byte_buf_memcpy/code.crabir /home/yusen/seawork/new-benchmarks/MRU-Domain-Benchmarks/precision/benchmarks/byte_buf_memcpy.c
+Platform: Linux 5.15.0-119-generic
+LLVM version: 14
+Clang command: /usr/bin/clang-14 -emit-llvm -o /tmp/tests/byte_buf_memcpy.bc -c /home/yusen/seawork/new-benchmarks/MRU-Domain-Benchmarks/precision/benchmarks/byte_buf_memcpy.c -Xclang -disable-O0-optnone -fdeclspec -fno-discard-value-names -g -m32 -I/home/yusen/seawork/clam/build/run/include -D __CRAB__=1 -fno-vectorize -fno-slp-vectorize
+clam-pp command: /home/yusen/seawork/clam/build/run/bin/clam-pp -o /tmp/tests/byte_buf_memcpy.pp.bc /tmp/tests/byte_buf_memcpy.bc --simplifycfg-sink-common=false --clam-promote-malloc=true --clam-inline-all --clam-peel-loops=1 --scalarize-load-store=true --clam-devirt --devirt-resolver=sea-dsa --sea-dsa-type-aware=true
+Sea-Dsa type aware!
+Omnipotent char: omni_i8*
+=== Resolution of indirect calls ===
+BRUNCH_STAT INDIRECT CALLS 0
+BRUNCH_STAT RESOLVED CALLS 0
+BRUNCH_STAT UNRESOLVED CALLS 0
+BRUNCH_STAT IGNORED ASM CALLS 0
+clam command: /home/yusen/seawork/clam/build/run/bin/clam /tmp/tests/byte_buf_memcpy.pp.bc -oll /tmp/tests/byte_buf_memcpy.pp.ll -crab-dom-param region.is_dereferenceable=true -crab-dom-param object.singletons_in_base=false -crab-dom-param object.reduction_level=OPT --simplifycfg-sink-common=false --clam-lower-unsigned-icmp --crab-lower-unsigned-icmp --crab-lower-with-overflow-intrinsics --crab-dom=zones --crab-widening-delay=1 --crab-widening-jump-set=0 --crab-narrowing-iterations=1 --crab-relational-threshold=10000 --crab-track=mem --crab-heap-analysis=cs-sea-dsa --sea-dsa-type-aware=true --sea-dsa-devirt --crab-singleton-aliases --crab-inter --crab-inter-max-summaries=9999999 --crab-inter-recursive=true --crab-inter-exact-summary-reuse=false --crab-inter-entry-main=true --crab-check --crab-print-cfg=false --crab-enable-warnings=false --crab-print-invariants=blocks --crab-store-invariants=false --crab-dot-cfg=false --ocrab=/home/yusen/seawork/new-benchmarks/MRU-Domain-Benchmarks/precision/outputs/obj/byte_buf_memcpy/code.crabir --use-crab-name-values=false --crab-enable-bignums=false
+Sea-Dsa type aware!
+Omnipotent char: omni_i8*
+Created file /home/yusen/seawork/new-benchmarks/MRU-Domain-Benchmarks/precision/outputs/obj/byte_buf_memcpy/code.crabir with analysis results
+
+************** ANALYSIS RESULTS ****************
+3  Number of total safe checks
+0  Number of total error checks
+0  Number of total warning checks
+************** ANALYSIS RESULTS END*************
+----------------------------------------------------------------------
+BRUNCH_STAT Clam 0.05
+BRUNCH_STAT ClamPP 0.00
+BRUNCH_STAT Clang 0.05
+----------------------------------------------------------------------
