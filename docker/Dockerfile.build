@@ -11,7 +11,7 @@ ENV PYTHON_PACKAGES="python3 python3-pip python3-setuptools python3-wheel"
 
 ENV LLVM14_PACKAGES="clang-14 lldb-14 lld-14 clang-format-14"
 
-ENV PIP_PACKAGES="lit OutputCheck networkx"
+ENV PIP_PACKAGES="lit OutputCheck networkx pandas matplotlib seaborn termcolor scipy"
 
 ENV OPAM_DEPS dune apron zarith menhir yojson ocamlfind
 
@@ -81,6 +81,18 @@ RUN mkdir build && cd build && \
     -DCLAM_USE_DBM_SAFEINT=OFF -DCLAM_USE_DBM_BIGNUM=ON \
     -DCUSTOM_BOOST_ROOT=/opt/boost
 
+RUN mkdir build_rgn && cd build_rgn && \
+    cmake .. -GNinja -DCLAM_ENABLE_ASAN=OFF -DCRAB_USE_APRON=OFF \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DLLVM_DIR=/usr/lib/llvm-14/lib/cmake/llvm \
+    -DCMAKE_INSTALL_PREFIX=run \
+    -DCMAKE_CXX_COMPILER=clang++-14 \
+    -DCMAKE_C_COMPILER=clang-14 \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+    -DCRAB_USE_LDD=ON \
+    -DCRAB_USE_ELINA=ON -DCLAM_USE_OBJECT_DOM=OFF \
+    -DCLAM_USE_DBM_SAFEINT=OFF -DCLAM_USE_DBM_BIGNUM=ON \
+    -DCUSTOM_BOOST_ROOT=/opt/boost
 
 RUN cd build && \
     cmake --build . --target extra && \
@@ -158,5 +170,11 @@ RUN eval `opam config env` && ./configure --prefix /home/agent/tools && \
 USER agent
 WORKDIR /home/agent
 
-RUN mkdir benchmarks
-COPY --chown=agent:agent ../. benchmarks
+# RUN mkdir benchmarks
+# COPY --chown=agent:agent . benchmarks
+RUN git clone https://github.com/LinerSu/MRU-Domain-Benchmarks.git benchmarks
+
+# Case Study
+WORKDIR /home/agent/benchmarks
+RUN git submodule init && git submodule update
+RUN cd case_study && /bin/bash scripts/pull_aws_repo.sh
