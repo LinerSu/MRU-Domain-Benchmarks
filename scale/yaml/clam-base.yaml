@@ -5,7 +5,7 @@ clam_options:
 # Optimization level for seaopt  
   '-O3': ''
   save-temps: ''
-  temp-dir: /tmp/clam-benchs
+  temp-dir: /tmp/results/scale
 #   
 # PREPROCESSING
 #

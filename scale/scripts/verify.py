@@ -4,7 +4,7 @@ import os
 import os.path
 import sys
 
-CLAM_DIR = '/home/yusen/seawork/clam'
+CLAM_DIR = '/home/agent/tools/clam'
 CLAMYAML_DIR = 'run/bin/clam-yaml.py'
 
 def add_help_arg (ap):

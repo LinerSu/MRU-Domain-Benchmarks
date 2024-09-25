@@ -27,6 +27,8 @@ JSON_FILE="${PARENT_DIR}/configs/mopsa_rel.json"
 
 list="$(find $BENCH_DIR -type f -name '*.c')"
 
+mkdir -p /tmp/results/precision
+
 printf "\n\n================================================\n"
 
 # Check the value of DOM and echo the appropriate message or abort

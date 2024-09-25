@@ -6,7 +6,7 @@ clam_options:
   # '-O3': ''
   '-D': '__CRAB__'
   save-temps: ''
-  temp-dir: /tmp/tests
+  temp-dir: /tmp/results/precision
 #   
 # PREPROCESSING
 #

@@ -2,6 +2,8 @@
 # Cleanup all previous runs
 ./clean_up.sh
 
+mkdir -p /tmp/results/scale
+
 # Run the experiments
 
 # 1. Run experiment for the summarization domain (in crab, we called region domain)
