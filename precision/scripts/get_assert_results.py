@@ -80,11 +80,58 @@ def process_crabir_assert_comment(cassert_lines, crabir_lines):
         else:
             continue
         assert_lines[assert_line['line']] = assert_line
+
+    for line, info in cassert_lines.items():
+        if line not in assert_lines:
+            assert_line = {
+                'line': info['line'],
+                'file': info['file'],
+                'type': info['type'],
+                'result': 'SAFE',
+            }
+            assert_lines[line] = assert_line
     return assert_lines
 
 def process_mopsa_assert_json(cassert_lines, mopsa_json):
-    # checks = mopsa_json['checks']
-    return {}
+    assert_lines = {}
+    if not mopsa_json:
+        return assert_lines
+    checks = mopsa_json['checks']
+    for check in checks:
+        line = None
+        if check['title'] != 'Invalid memory access' and check['title'] != 'Assertion failure' and check['title'] != 'Stub condition':
+            continue
+        if check['title'] == 'Stub condition' and check['callstack'][0]['function'] != '_mopsa_assert_valid_bytes':
+            continue
+
+        if check['range']['start']['line'] not in cassert_lines:
+            if check['callstack'][0]['range']['start']['line'] not in cassert_lines:
+                continue
+            line = check['callstack'][0]['range']['start']['line']
+        else:
+            line = check['range']['start']['line']
+        assert_line = {
+            'line': None,
+            'file': None,
+            'type': None,
+            'result': None,
+        }
+        assert_line['line'] = line
+        assert_line['file'] = cassert_lines[assert_line['line']]['file']
+        assert_line['type'] = cassert_lines[assert_line['line']]['type']
+        assert_line['result'] = check['kind'].upper()
+        assert_lines[assert_line['line']] = assert_line
+
+    for line, info in cassert_lines.items():
+        if line not in assert_lines:
+            assert_line = {
+                'line': info['line'],
+                'file': info['file'],
+                'type': info['type'],
+                'result': 'SAFE',
+            }
+            assert_lines[line] = assert_line
+    return assert_lines
 
 
 def process_each_benchmark(benchmark):

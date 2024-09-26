@@ -1,6 +1,6 @@
 #!/bin/bash
 TOOL_DIR=$1 # /home/agent/tool/clam/
-# by default, run: ./run_scale_experiment.sh $CLAM_DIR
+# by default, run: ./run_scale_experiments.sh $CLAM_DIR
 # Cleanup all previous runs
 ./clean_up.sh
 
@@ -25,6 +25,6 @@ mkdir -p /tmp/results/scale
 echo "\n\n================================================"
 echo "                 STATISTICS                 "
 echo "================================================\n\n"
-python3 get_paper_results.py &> ../paper_results/log.txt
+python3 get_paper_results.py &> ../paper_results/results.txt
 
 echo "Please find scatter plot and paper results in scale/paper_results directory"

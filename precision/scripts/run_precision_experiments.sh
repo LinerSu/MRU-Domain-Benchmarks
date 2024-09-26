@@ -1,7 +1,7 @@
 #!/bin/bash
 CLAM_DIR=$1 # /home/agent/tool/clam/
 MOPSA_DIR=$2 # /home/agent/tool/mopsa/
-# by default, run: ./run_precision_experiment.sh $CLAM_DIR $OPAM_SWITCH_PREFIX
+# by default, run: ./run_precision_experiments.sh $CLAM_DIR $OPAM_SWITCH_PREFIX
 # Cleanup all previous runs
 ./clean_up.sh
 
@@ -21,6 +21,6 @@ mkdir -p /tmp/results/precision
 echo "\n\n================================================"
 echo "                 STATISTICS                 "
 echo "================================================\n\n"
-python3 get_paper_results.py &> ../paper_results/log.txt
+python3 get_paper_results.py &> ../paper_results/results.txt
 
 echo "Please find paper results in precision/paper_results directory"

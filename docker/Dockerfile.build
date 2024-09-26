@@ -81,6 +81,15 @@ RUN mkdir build && cd build && \
     -DCLAM_USE_DBM_SAFEINT=OFF -DCLAM_USE_DBM_BIGNUM=ON \
     -DCUSTOM_BOOST_ROOT=/opt/boost
 
+RUN cd build && \
+    cmake --build . --target extra && \
+    cmake .. && \
+    cmake --build . --target ldd && \
+    cmake .. && \
+    cmake --build . --target elina && \
+    cmake .. && \
+    ninja install
+
 RUN mkdir build_rgn && cd build_rgn && \
     cmake .. -GNinja -DCLAM_ENABLE_ASAN=OFF -DCRAB_USE_APRON=OFF \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -94,16 +103,16 @@ RUN mkdir build_rgn && cd build_rgn && \
     -DCLAM_USE_DBM_SAFEINT=OFF -DCLAM_USE_DBM_BIGNUM=ON \
     -DCUSTOM_BOOST_ROOT=/opt/boost
 
-RUN cd build && \
-    cmake --build . --target extra && \
-    cmake .. && \
+RUN cd build_rgn && \
     cmake --build . --target ldd && \
     cmake .. && \
     cmake --build . --target elina && \
     cmake .. && \
     ninja install
 
-ENV CLAM=/home/agent/tools/clam/build/run/bin/clam PATH="$PATH:/home/agent/tools/clam/build/run/bin"
+# ENV CLAM=/home/agent/tools/clam/build/run/bin/clam PATH="$PATH:/home/agent/tools/clam/build/run/bin"
+
+ENV CLAM_DIR=/home/agent/tools/clam
 
 # SeaHorn
 WORKDIR /home/agent/tools
@@ -139,7 +148,7 @@ RUN cd build && \
     cmake .. && \
     ninja install
 
-ENV SEAHORN=/home/agent/tools/seahorn/build/run/bin/sea PATH="$PATH:/home/agent/tools/seahorn/build/run/bin"
+ENV SEAHORN_ROOT=/home/agent/tools/seahorn/build/run
 
 # Mopsa
 WORKDIR /home/agent/tools
@@ -152,8 +161,8 @@ RUN opam init --disable-sandboxing -y && \
     opam install -y -j $JOBS $OPAM_DEPS
 
 RUN eval `opam config env` && \
-    opam env >> .profile && \
-    opam env >> .bashrc
+    opam env >> ~/.profile && \
+    opam env >> ~/.bashrc
 
 WORKDIR /home/agent/tools
 RUN git clone https://gitlab.com/mopsa/mopsa-analyzer.git && \
@@ -170,9 +179,9 @@ RUN eval `opam config env` && ./configure --prefix /home/agent/tools && \
 USER agent
 WORKDIR /home/agent
 
-# RUN mkdir benchmarks
-# COPY --chown=agent:agent . benchmarks
-RUN git clone https://github.com/LinerSu/MRU-Domain-Benchmarks.git benchmarks
+RUN mkdir benchmarks
+COPY --chown=agent:agent . benchmarks
+# RUN git clone https://github.com/LinerSu/MRU-Domain-Benchmarks.git benchmarks
 
 # Case Study
 WORKDIR /home/agent/benchmarks

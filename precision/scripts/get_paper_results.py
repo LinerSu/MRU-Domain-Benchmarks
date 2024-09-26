@@ -111,7 +111,7 @@ def read_csv_files():
     # Output the filtered DataFrame
     obj = rename(obj, 'D_o')
     rgn = rename(rgn, 'D_s')
-    # mopsa = rename(mopsa, 'D_r')
+    mopsa = rename(mopsa, 'D_r')
 
     if SHOW_DETAILS:
         print('')
@@ -129,10 +129,10 @@ def read_csv_files():
         print('')
         print_centered_title("D_r", "-")
         print('')
-        # print(mopsa)
+        print(mopsa)
 
     res = pd.merge(obj, rgn, on=['name', 'line', 'type'], how='inner')
-    # res = pd.merge(res, mopsa, on=['name', 'line', 'type'], how='inner')
+    res = pd.merge(res, mopsa, on=['name', 'line', 'type'], how='inner')
 
     # Assertion Statistics
     # Summarize the number of assertions proven or difficult to prove for each domain in each benchmark

@@ -13,6 +13,8 @@ debug() {
   fi
 }
 
+mkdir -p /tmp/results/precision
+
 # Function to print a centered title within asterisks of the given width
 print_centered_title() {
     local title="$1"
@@ -63,7 +65,6 @@ elif [ "$DOM" == "obj" ]; then
   LOG_FILE="log.txt"
 elif [ "$DOM" == "mopsa" ]; then
     print_centered_title "Using the Recency domain with MOPSA" "=" 40
-    exit 0
     OUTPUT_DIR="${PARENT_DIR}/outputs/${DOM}"
     FILE_NAME=${DOM}
     EXTRA_CMD="-numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print -format json"
@@ -89,6 +90,7 @@ if [ "$DOM" == "mopsa" ]; then
     mkdir -p ${subdir}
     debug "<-- start with $name.c"
     debug "${MOPSA_CMD} -config ${JSON_FILE} $cfile > ${subdir}/${LOG_FILE} 2>&1"
+    ${MOPSA_CMD} -config ${JSON_FILE} $cfile > ${subdir}/${LOG_FILE} 2>&1
     ret_sig=$?
     # exit 0
     if [ $ret_sig -ne 0 ]; then
