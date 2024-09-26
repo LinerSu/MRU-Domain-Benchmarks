@@ -1,8 +1,8 @@
 #!/bin/bash
-# arguments: $1=DOM $2=DEBUG_LEVEL
-DOM=$1
+# arguments: $1: TOOL_DIR, $2: DOM, $3: DEBUG_LEVEL
+TOOL_DIR=$1 # /home/yusen/seawork/clam/
+DOM=$2
 # Set the clam directory
-TOOL_DIR=$2 # /home/yusen/seawork/clam/
 # Set the debug level (info, debug)
 DEBUG_LEVEL=${3:-info}  # Default to info if not provided
 
@@ -11,6 +11,27 @@ debug() {
   if [ "$DEBUG_LEVEL" == "debug" ]; then
     echo "$@"
   fi
+}
+
+# Function to print a centered title within asterisks of the given width
+print_centered_title() {
+    local title="$1"
+    local single="${2:-*}"  # Default to "*" if not provided
+    local width="${3:-34}"  # Default to 34 if not provided
+
+    # Calculate the padding needed to center the title
+    local title_length=${#title}
+    local padding=$(( (width - title_length) / 2 ))
+
+    # Adjust padding for titles with odd lengths
+    if [ $((title_length % 2)) -ne 0 ] && [ $((width % 2)) -eq 0 ]; then
+        title="$title "
+    fi
+
+    # Print the formatted output
+    printf "\n\n%${width}s\n" | tr " " "$single"
+    printf "%*s%s%*s\n" $padding "" "$title" $padding ""
+    printf "%${width}s\n\n" | tr " " "$single"
 }
 
 # Get the full path of the directory containing the script
@@ -27,25 +48,22 @@ JSON_FILE="${PARENT_DIR}/configs/mopsa_rel.json"
 
 list="$(find $BENCH_DIR -type f -name '*.c')"
 
-mkdir -p /tmp/results/precision
-
-printf "\n\n================================================\n"
-
 # Check the value of DOM and echo the appropriate message or abort
 if [ "$DOM" == "rgn" ]; then
-  echo "Using summarization domain."
+  print_centered_title "Using summarization domain" "=" 34
   OUTPUT_DIR="${PARENT_DIR}/outputs/${DOM}"
   FILE_NAME=${DOM}
   CLAM_CMD="${TOOL_DIR}/build_rgn/${CLAM_PY}"
   LOG_FILE="log.txt"
 elif [ "$DOM" == "obj" ]; then
-  echo "Using the MRU domain with heuristics reduction."
+  print_centered_title "Using the MRU domain with heuristics reduction" "=" 60
   OUTPUT_DIR="${PARENT_DIR}/outputs/${DOM}"
   FILE_NAME=${DOM}
   CLAM_CMD="${TOOL_DIR}/build/${CLAM_PY}"
   LOG_FILE="log.txt"
 elif [ "$DOM" == "mopsa" ]; then
-    echo "Using the Recency domain with MOPSA."
+    print_centered_title "Using the Recency domain with MOPSA" "=" 40
+    exit 0
     OUTPUT_DIR="${PARENT_DIR}/outputs/${DOM}"
     FILE_NAME=${DOM}
     EXTRA_CMD="-numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print -format json"
@@ -55,7 +73,6 @@ else
   echo "Invalid domain. Aborting."
   exit 1
 fi
-printf "================================================\n"
 
 # WARN: Remove all files
 debug "rm -rf ${OUTPUT_DIR}/*"
@@ -102,3 +119,7 @@ else
     # ) &
     done
 fi
+
+
+printf "\n\nGenerating results ... \n\n"
+python3 get_assert_results.py --"$DOM"

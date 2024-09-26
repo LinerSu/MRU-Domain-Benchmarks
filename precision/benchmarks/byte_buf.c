@@ -59,7 +59,11 @@ int main() {
   ary[0]->buffer = new_buf;
   ary[0]->length = 15;
   ary[0]->capacity = 20;
-  assert(ary[0]->length <= ary[0]->capacity); // mopsa and VSTTE cannot prove due to weak updates
+  int length = ary[0]->length;
+  length = nd_bool() ? length : 4;
+  length = ary[0]->length;
+  int capacity = ary[0]->capacity;
+  assert(length <= capacity); // mopsa and VSTTE cannot prove due to weak updates
   ASSERT_IS_DEREF(
       ary[0]->buffer,
       ary[0]->length * sizeof(char)); // mopsa claims this is out-of-bounds access
@@ -71,19 +75,15 @@ int main() {
 
 /*
 Obj:
-Reported 2 safe checks
+Reported 3 safe checks
 
 Rgn:
-Reported 2 warning checks
-
-==> Q: why one less assertion?
-The assertion on 62 can be optimize as assert(true) through constant
-propagation. Crab uses LLVM pass to simplify code.
+Reported 3 warning checks
 
 Mopsa:
 Commands:
 mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print byte_buf.c
 
 
-3 warning checks on Line 69, Line 70 and Line 73 reported.
+3 warning checks on Line 66, Line 67 and Line 70 reported.
 */
