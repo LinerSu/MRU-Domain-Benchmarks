@@ -1,4 +1,4 @@
-// This is identical to https://gitlab.com/mopsa/mopsa-analyzer/-/blob/main/share/mopsa/configs/c/cell-rel-itv.json?ref_type=heads
+// This is identical to https://gitlab.com/mopsa/mopsa-analyzer/-/blob/main/share/mopsa/configs/c/cell-itv.json?ref_type=heads
 {
     "language": "c",
     "domain": {
@@ -57,20 +57,12 @@
                     "universal.iterators.unittest",
                     // Numeric environment
                     {
-                        "product": [
-                            {
-                                "nonrel": {
-                                    "union": [
-                                        "universal.numeric.values.intervals.float",
-                                        "universal.numeric.values.intervals.integer"
-                                    ]
-                                }
-                            },
-                            "universal.numeric.relational"
-                        ],
-                        "reductions": [
-                            "universal.numeric.reductions.intervals_rel"
-                        ]
+                        "nonrel": {
+                            "union": [
+                                "universal.numeric.values.intervals.float",
+                                "universal.numeric.values.intervals.integer"
+                            ]
+                        }
                     }
                 ]
             }
