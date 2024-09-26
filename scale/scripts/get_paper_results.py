@@ -24,6 +24,25 @@ DATA_FOLDER = os.path.join(os.path.dirname(os.getcwd()), 'data')
 RESULTS_FOLDER = os.path.join(os.path.dirname(os.getcwd()), 'paper_results')
 paper_stats = {}
 
+def print_centered_title(title, single="*", width=34):
+    """
+    Prints a centered title within asterisks of the given width.
+
+    :param title: The title to be centered and printed.
+    :param width: The total width of the line (default is 34).
+    """
+    # Calculate the padding needed to center the title
+    padding = (width - len(title)) // 2
+
+    # Adjust padding for titles with odd lengths
+    if len(title) % 2 != 0 and width % 2 == 0:
+        title += " "
+
+    # Print the formatted output
+    print(single * width)
+    print(" " * padding + title + " " * padding)
+    print(single * width)
+
 def compute_speedup_percentage(name, redtype, old, new):
     if old == 0:
         if new - old > 1.0:
@@ -236,9 +255,7 @@ def read_csv_files():
         print(f"D_o with FULL is slower than {column:<4} {int(diff)} seconds on average.")
 
 if __name__ == '__main__':
-    print("=" * 34)
-    print("           STATISTICS            ")
-    print("=" * 34)
+    print_centered_title("STATISTICS", "=")
     print(f"\nNote that the timeout threshold is {TIMEOUT_THRESHOLD} seconds.")
     print(f"The MRU Domain is represented as 'D_o' in the paper.")
     print(f"The Summarization Domain is represented as 'D_s' in the paper.")

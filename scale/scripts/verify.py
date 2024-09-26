@@ -59,6 +59,8 @@ def main(argv):
                               default=False)
             argp.add_argument('--mem-dom', dest='mem_dom', type=str, default='obj',
                               help='Select what type of domain')
+            argp.add_argument('--tool-dir', dest='tool_dir', type=str, default=CLAM_DIR,
+                              help='CLAM directory')
             argp.add_argument('--reduce-option', dest='reduce_option', type=str, default=None,help='Select what type of reduction')
             argp.add_argument('--silent', action='store_true', default=False,
                               help='Do not produce any output')
@@ -100,7 +102,10 @@ def main(argv):
                 build_dir = 'build_rgn'
             else:
                 sys.exit(-1)
-                
+
+            if args.tool_dir is not None:
+                CLAM_DIR = args.tool_dir
+
             if not os.path.exists(CLAM_DIR):
                 print(f'CLAM directory not found: {CLAM_DIR}')
                 print(f'Please set the CLAM_DIR environment variable in {__file__} script.')

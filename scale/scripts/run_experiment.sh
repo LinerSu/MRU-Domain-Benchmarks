@@ -1,15 +1,37 @@
 #!/bin/bash
-# arguments: $1=DOM $2=OBJ_MODE $3=DEBUG_LEVEL
-DOM=$1
-OBJ_MODE=${2:-none} # Default to none if not provided
+# arguments: $1: TOOL_DIR, $2: DOM, $3: DEBUG_LEVEL
+TOOL_DIR=$1 # /home/agent/clam/
+DOM=$2
+OBJ_MODE=${3:-none} # Default to none if not provided
 # Set the debug level (0: no debug, 1: basic debug, 2: detailed debug)
-DEBUG_LEVEL=${3:-info}  # Default to info if not provided
+DEBUG_LEVEL=${4:-info}  # Default to info if not provided
 
 # Function to print debug messages
 debug() {
   if [ "$DEBUG_LEVEL" == "debug" ]; then
     echo "$@"
   fi
+}
+
+# Function to print a centered title within asterisks of the given width
+print_centered_title() {
+    local title="$1"
+    local single="${2:-*}"  # Default to "*" if not provided
+    local width="${3:-34}"  # Default to 34 if not provided
+
+    # Calculate the padding needed to center the title
+    local title_length=${#title}
+    local padding=$(( (width - title_length) / 2 ))
+
+    # Adjust padding for titles with odd lengths
+    if [ $((title_length % 2)) -ne 0 ] && [ $((width % 2)) -eq 0 ]; then
+        title="$title "
+    fi
+
+    # Print the formatted output
+    printf "%${width}s\n" | tr " " "$single"
+    printf "%*s%s%*s\n" $padding "" "$title" $padding ""
+    printf "%${width}s\n" | tr " " "$single"
 }
 
 # Get the full path of the directory containing the script
@@ -27,8 +49,6 @@ black_list=$(echo $black_list | tr ' ' '\n')
 list="$(find $BENCH_DIR -type f -name '*.bc')"
 # list="$BENCH_DIR/coreutils/true.bc"
 
-printf "\n\n================================================\n"
-
 # Check if DOM is provided
 if [ -z "$DOM" ]; then
   echo "DOM is required. Aborting."
@@ -37,7 +57,7 @@ fi
 
 # Check the value of DOM and echo the appropriate message or abort
 if [ "$DOM" == "rgn" ]; then
-  echo "Using summarization domain."
+  print_centered_title "Using summarization domain" "=" 34
   OUTPUT_DIR="${PARENT_DIR}/outputs/${DOM}"
   FILE_NAME=${DOM}
 elif [ "$DOM" == "obj" ]; then
@@ -45,11 +65,11 @@ elif [ "$DOM" == "obj" ]; then
     echo "OBJ_MODE is required for obj domain. Aborting."
     exit 1
   elif [ "$OBJ_MODE" == "none" ]; then
-    echo "Using the MRU domain with no reduction."
+    print_centered_title "Using the MRU domain with no reduction" "=" 60
   elif [ "$OBJ_MODE" == "opt" ]; then
-    echo "Using the MRU domain with heuristics reduction."
+    print_centered_title "Using the MRU domain with heuristics reduction" "=" 60
   elif [ "$OBJ_MODE" == "full" ]; then
-    echo "Using the MRU domain with full reduction."
+    print_centered_title "Using the MRU domain with full reduction" "=" 60
   else
     echo "Invalid OBJ_MODE. Aborting."
     exit 1
@@ -60,7 +80,6 @@ else
   echo "Invalid domain. Aborting."
   exit 1
 fi
-printf "================================================\n"
 
 # WARN: Remove all files
 rm -rf ${OUTPUT_DIR}/*
@@ -89,7 +108,7 @@ do
   mkdir -p ${subdir}
   # ( "--bounds"
   # echo "${timeout} ${CLAM_CMD} "--mem-dom" $DOM $bc -ocrab=${subdir}/${crabir} > ${subdir}/${LOG_FILE} 2>&1"
-  timeout ${timeout} ${CLAM_CMD} "--mem-dom" $DOM $bc -ocrab=${subdir}/${crabir} > ${subdir}/${LOG_FILE} 2>&1
+  timeout ${timeout} ${CLAM_CMD} "--tool-dir" $TOOL_DIR  "--mem-dom" $DOM $bc -ocrab=${subdir}/${crabir} > ${subdir}/${LOG_FILE} 2>&1
   ret_sig=$?
   # exit 0
   if [ $ret_sig -eq 124 ]; then
