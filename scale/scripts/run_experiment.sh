@@ -66,10 +66,13 @@ elif [ "$DOM" == "obj" ]; then
     exit 1
   elif [ "$OBJ_MODE" == "none" ]; then
     print_centered_title "Using the MRU domain with no reduction" "=" 60
+    CLAM_CMD="${CLAM_CMD} --reduce-option none"
   elif [ "$OBJ_MODE" == "opt" ]; then
     print_centered_title "Using the MRU domain with heuristics reduction" "=" 60
+    CLAM_CMD="${CLAM_CMD} --reduce-option opt"
   elif [ "$OBJ_MODE" == "full" ]; then
     print_centered_title "Using the MRU domain with full reduction" "=" 60
+    CLAM_CMD="${CLAM_CMD} --reduce-option full"
   else
     echo "Invalid OBJ_MODE. Aborting."
     exit 1

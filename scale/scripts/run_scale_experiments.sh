@@ -22,9 +22,9 @@ mkdir -p /tmp/results/scale
 
 # Generate scatter plot (as figure in the paper) and paper results in a log file
 
-echo "\n\n================================================"
+printf "\n\n================================================\n"
 echo "                 STATISTICS                 "
-echo "================================================\n\n"
+printf "================================================\n\n"
 python3 get_paper_results.py &> ../paper_results/results.txt
 
 echo "Please find scatter plot and paper results in scale/paper_results directory"

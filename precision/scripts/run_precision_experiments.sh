@@ -18,9 +18,9 @@ mkdir -p /tmp/results/precision
 ./run_experiment.sh $MOPSA_DIR mopsa
 
 # Generate paper results in a log file
-echo "\n\n================================================"
+printf "\n\n================================================\n"
 echo "                 STATISTICS                 "
-echo "================================================\n\n"
+printf "================================================\n\n"
 python3 get_paper_results.py &> ../paper_results/results.txt
 
 echo "Please find paper results in precision/paper_results directory"
