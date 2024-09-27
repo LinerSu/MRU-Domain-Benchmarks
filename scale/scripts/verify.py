@@ -76,6 +76,9 @@ def main(argv):
                               help='Check is-deref assertions')
             argp.add_argument('--nocheck', action='store_true', default=False,
                               help='No safety property check, dry run')
+            argp.add_argument('--show-stats', dest='show_stats', 
+                              action='store_true', default=False,
+                              help='Show statistics in the output')
             argp.add_argument('input_file', nargs=1)
             argp.add_argument('--dry-run', dest='dry_run',
                               action='store_true', default=False,
@@ -126,6 +129,10 @@ def main(argv):
             elif args.reduce_option == 'full':
                 fullreduce_config = os.path.join(yaml_dir, 'mru_full_reduce.yaml')
                 cmd.extend(['-y', fullreduce_config])
+
+            if args.show_stats:
+                stats_config = os.path.join(yaml_dir, 'clam-stats.yaml')
+                cmd.extend(['-y', stats_config])
 
             if args.dry_run:
                 cmd.append('--dry-run')
