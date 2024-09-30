@@ -77,17 +77,3 @@ int main() {
 
   return 0;
 }
-
-/*
-Obj:
-Reported 1 safe check on Line 72
-
-rgn:
-Reported 1 warning check on Line 72
-
-Mopsa:
-Commands:
-mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print object.c
-
-Reported 1 warning check on Line 72
-*/

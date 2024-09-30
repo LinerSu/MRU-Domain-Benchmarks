@@ -88,19 +88,3 @@ int main(void) {
 
   return 0;
 }
-
-/*
-Obj:
-Reported 3 safe checks on Line 85, Line 86 and Line 87
-
-Rgn:
-Reported 1 safe check on Line 85
-Reported 2 warning checks on Line 86 and Line 87
-
-Mopsa:
-Commands:
-mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print byte_buf_path.c
-
-Reported 2 safe checks on Line 85 and Line 87
-Reported 1 warning check on Line 86 
-*/

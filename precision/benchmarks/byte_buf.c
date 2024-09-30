@@ -72,18 +72,3 @@ int main() {
       ary[0]->capacity * sizeof(char)); // mopsa claims this is out-of-bounds access
   return 0;
 }
-
-/*
-Obj:
-Reported 3 safe checks
-
-Rgn:
-Reported 3 warning checks
-
-Mopsa:
-Commands:
-mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print byte_buf.c
-
-
-3 warning checks on Line 66, Line 67 and Line 70 reported.
-*/

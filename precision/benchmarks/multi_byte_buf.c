@@ -96,18 +96,3 @@ int main() {
 
   return 0;
 }
-
-/*
-Obj:
-Reported 3 safe checks on Line 93, Line 94 and Line 95
-
-Rgn:
-reported 3 warning checks on Line 93, Line 94 and Line 95
-
-Mopsa:
-Commands:
-mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print multi_byte_buf.c
-
-Reported 3 warning checks on Line 93, Line 94 and Line 95
-
-*/

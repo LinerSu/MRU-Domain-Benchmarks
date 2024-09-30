@@ -95,21 +95,3 @@ int main() {
 
     return 0;
 }
-
-/*
-Obj:
-Reported 3 safe checks on Line 54, Line 61 and Line 94
-
-Rgn:
-Reported 3 warning checks on Line 54, Line 61 and Line 94
-
-Mopsa:
-Commands:
-mopsa-c -config mopsa_rel.json -numeric octagon -widening-delay=2 -loop-decr-it -stub-ignore-case malloc.failure -debug print byte_buf_memcpy.c
-
-Reported 1 safe check on Line 94.
-Reported 2 warning checks on Line 54 and Line 61.
-Lots of warnings reported.
-Reported invalid memory access when we pass the pointer `buf_to_use` 
-which points to one of two byte buffers. 
-*/
