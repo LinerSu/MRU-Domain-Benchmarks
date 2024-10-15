@@ -189,4 +189,4 @@ RUN git submodule init && git submodule update
 RUN cd case_study && /bin/bash scripts/pull_aws_repo.sh
 
 # Create tmp folder
-RUN mkdir -p /tmp/results/scale && mkdir -p /tmp/results/precision && mkdir -p /tmp/results/case_study
+RUN mkdir -p /tmp/results/scale && mkdir -p /tmp/results/precision && mkdir -p /tmp/results/case_study && mkdir -p /tmp/results/case_study/crab
